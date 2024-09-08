@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage and Cookies Viewer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .textarea-container {
+            width: 100%;
+        }
+        .button-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-light d-flex justify-content-center align-items-center vh-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-group textarea-container">
+                    <textarea id="storageOutput" class="form-control" rows="20"></textarea>
+                </div>
+                <div class="button-container mt-3">
+                    <button onclick="printStorageAndCookies()" class="btn btn-primary mb-2">Print Storage and Cookies</button>
+                    <br>
+                    <button onclick="clearLocalStorage()" class="btn btn-danger mb-2">Clear Local Storage</button>
+                    <button onclick="clearSessionStorage()" class="btn btn-danger mb-2">Clear Session Storage</button>
+                    <button onclick="clearCookies()" class="btn btn-danger">Clear Cookies</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function getCookies() {
+            const cookies = document.cookie.split('; ').map(cookie => {
+                const [name, ...rest] = cookie.split('=');
+                const value = rest.join('=');
+                return `${name}: ${value}`;
+            });
+            return cookies.join('\n');
+        }
+
+        function printStorageAndCookies() {
+            const textarea = document.getElementById('storageOutput');
+
+            let output = 'Cookies:\n';
+            output += getCookies() + '\n\n';
+
+            output += 'Local Storage:\n';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                output += `${key}: ${value}\n`;
+            }
+
+            output += '\nSession Storage:\n';
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                const value = sessionStorage.getItem(key);
+                output += `${key}: ${value}\n`;
+            }
+
+            textarea.value = output;
+        }
+
+        function clearLocalStorage() {
+            localStorage.clear();
+            alert('Local Storage cleared!');
+            printStorageAndCookies(); // Optionally update the display
+        }
+
+        function clearSessionStorage() {
+            sessionStorage.clear();
+            alert('Session Storage cleared!');
+            printStorageAndCookies(); // Optionally update the display
+        }
+
+        function clearCookies() {
+            const cookies = document.cookie.split(';');
+            cookies.forEach(cookie => {
+                const [name] = cookie.split('=');
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+            });
+            alert('Cookies cleared!');
+            printStorageAndCookies(); // Optionally update the display
+        }
+    </script>
+</body>
+</html>
